@@ -1,0 +1,3 @@
+[submodule "ts-map"]
+	path = ts-map
+	url = https://github.com/opwop1/ts-map.git

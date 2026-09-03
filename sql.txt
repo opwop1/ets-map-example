@@ -1,0 +1,4 @@
+# ets
+node gen-marker-sql.js --dir "f:/code/ets-map-example-main/瓦片-用/tmp-ets" --mapType 3 --base https://ets_tiles.cnly.top/20260903/tmp-ets
+# promods
+node gen-marker-sql.js --dir "f:/code/ets-map-example-main/瓦片-用/tmp-promods" --mapType 2 --base https://ets_tiles.cnly.top/20260903/tmp-promods

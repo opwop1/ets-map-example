@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+    <script src="https://ets-map.oss-cn-beijing.aliyuncs.com/mapinfo.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.13.2/dist/axios.min.js"></script>
+</head>
+<body>
+    <div id="map" style="--country-opacity: 1; --city-opacity: 0; --point-opacity: 0"></div>
+    <div class="map-switch">
+        <button class="map-switch-btn" data-map-type="1">原版 ETS2</button>
+        <button class="map-switch-btn" data-map-type="2">ProMods</button>
+        <button class="map-switch-btn active" data-map-type="3">TMP-ETS2</button>
+        <button class="map-switch-btn color-btn" id="colorSwitchBtn" style="display: none;">黄色路线</button>
+    </div>
+    <div class="axis-box">axis</div>
+    <div class="player-info" id="playerInfo"></div>
+    <script src="script.js"></script>
+</body>
+</html>
