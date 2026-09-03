@@ -1,4 +1,4 @@
 # ets-map-example
-ETS2地图代码示例，仅有 TruckersMP 地图，后续增加 Prodmods 地图
+ETS2地图代码示例，包含标准地图和promods地图，支持双颜色
 
-在线地图: https://79887143.github.io/ets-map-example
+在线地图: https://opwop1.github.io/ets-map-example
