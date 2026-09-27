@@ -1,6 +1,20 @@
 // ============ 地图类型配置 ============
-// 1: 原版 ETS2  2: ProMods(临时导出)  3: 新版 ETS2(临时导出)
-// promods 坐标系来自 tmp-promods/TileMapInfo.json, factor = tileSize / 地图宽度
+// 2: ProMods(临时导出)  3: 新版 ETS2(临时导出)
+// 坐标系来自各自导出目录的 TileMapInfo.json, factor = tileSize / 地图宽度
+const etsMapInfo = {
+    minX: -113177.313,
+    minY: -122648.086,
+    maxX: 97925.625,
+    maxY: 88454.85,
+    mapWidth: 211102.938,
+    mapHeight: 211102.936,
+    factorX: 512 / 211102.938,
+    factorY: 512 / 211102.936,
+    minZoom: 2,
+    maxZoom: 8,
+    tileSize: 512
+};
+
 const promodsMapInfo = {
     minX: -135110.156,
     minY: -197653.719,
@@ -16,12 +30,6 @@ const promodsMapInfo = {
 };
 
 const MAP_TYPES = {
-    1: {
-        name: '原版 ETS2',
-        mapConfig: () => mapinfo.ets,
-        tileUrl: 'https://ets-map.oss-cn-beijing.aliyuncs.com/tiles/ets/{z}/{x}/{y}.png',
-        supportsYellow: false
-    },
     2: {
         name: 'ProMods',
         mapConfig: () => promodsMapInfo,
@@ -33,7 +41,7 @@ const MAP_TYPES = {
     },
     3: {
         name: '新版 ETS2',
-        mapConfig: () => mapinfo.ets,
+        mapConfig: () => etsMapInfo,
         tileUrl: {
             white: 'https://ets_tiles.cnly.top/20260903/tmp-ets/Tiles/{z}/{x}/{y}.png',
             yellow: 'https://ets_tiles.cnly.top/20260903/tmp-ets-yellow/Tiles/{z}/{x}/{y}.png'
@@ -91,7 +99,7 @@ function switchMapType(mapTypeId) {
     pointMap.clear();
     playerMarkers = [];
 
-    // 原版 ETS2 无黄色瓦片, 切换过去时重置为白色
+    // 无黄色瓦片的地图, 切换过去时重置为白色
     if (!MAP_TYPES[mapTypeId].supportsYellow) currentTileColor = 'white';
     updateColorBtn();
 
