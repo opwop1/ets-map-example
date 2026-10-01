@@ -23,7 +23,7 @@ const etsMapInfo = {
     minY: -122648.086,
     maxX: 97925.625,
     maxY: 88454.85,
-    minZoom: 0,
+    minZoom: 2,
     maxZoom: 8,
     tileSize: TILE_SIZE
 };
@@ -33,7 +33,7 @@ const promodsMapInfo = {
     minY: -197653.719,
     maxX: 205684.1,
     maxY: 143140.531,
-    minZoom: 0,
+    minZoom: 2,
     maxZoom: 8,
     tileSize: TILE_SIZE
 };
@@ -44,7 +44,7 @@ const atsMapInfo = {
     minY: -79127.37,
     maxX: 41144.0938,
     maxY: 82115.62,
-    minZoom: 0,
+    minZoom: 2,
     maxZoom: 8,
     tileSize: TILE_SIZE
 };
@@ -55,7 +55,7 @@ const atsPromodsMapInfo = {
     minY: -87127.17,
     maxX: 41880.9453,
     maxY: 75589.5156,
-    minZoom: 0,
+    minZoom: 2,
     maxZoom: 8,
     tileSize: TILE_SIZE
 };
