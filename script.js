@@ -1,18 +1,31 @@
 // ============ 地图类型配置 ============
-// 2: ProMods(临时导出)  3: 新版 ETS2(临时导出)
-// 坐标系来自各自导出目录的 TileMapInfo.json, factor = tileSize / 地图宽度
+// 3: ETS2-TMP  2: ETS-Promods  4: ATS  5: ATS-Promods
+//
+// 坐标系换算(与导出端 TsMapCanvas 严格一致):
+//   x1/x2/y1/y2 来自各导出目录的 TileMapInfo.json
+//   x1/y1 = 该地图 z=0 那张瓦片的左下角世界坐标(已含 mapPadding=500 的留白)
+//   地图边长 W = x2 - x1, H = y2 - y1(实际上恒为正方形)
+//   缩放 zoom = 512 / max(W, H)   —— 512 是 tileSize
+//   单个瓦片覆盖的世界尺寸 span = 512 / zoom = max(W, H)
+//   pos0 = (x1, y1) 即 z=0 瓦片的左下角
+//
+// 在 z=0 层级整张图刚好塞进一张 512x512 的瓦片, 四角与 (x1,y1)-(x2,y2) 精确重合。
+// 在 z 层级共 2^z * 2^z 张瓦片, 每张覆盖 span / 2^z 的世界单位。
+// Leaflet 用 L.CRS.Simple + transformation(factor, -minX*factor, factor, -minY*factor)
+// 把世界坐标 x 映射为 lng、y 映射为 lat(见下方 initMap)。
+//
+// 下面每个配置的 minX/maxX/minY/maxY 直接取 TileMapInfo 的 x1/x2/y1/y2,
+// span 取 max(x2-x1, y2-y1), factor = 512 / span。
+const TILE_SIZE = 512;
+
 const etsMapInfo = {
     minX: -113177.313,
     minY: -122648.086,
     maxX: 97925.625,
     maxY: 88454.85,
-    mapWidth: 211102.938,
-    mapHeight: 211102.936,
-    factorX: 512 / 211102.938,
-    factorY: 512 / 211102.936,
-    minZoom: 2,
+    minZoom: 0,
     maxZoom: 8,
-    tileSize: 512
+    tileSize: TILE_SIZE
 };
 
 const promodsMapInfo = {
@@ -20,31 +33,81 @@ const promodsMapInfo = {
     minY: -197653.719,
     maxX: 205684.1,
     maxY: 143140.531,
-    mapWidth: 340794.256,
-    mapHeight: 340794.25,
-    factorX: 512 / 340794.256,
-    factorY: 512 / 340794.25,
-    minZoom: 2,
+    minZoom: 0,
     maxZoom: 8,
-    tileSize: 512
+    tileSize: TILE_SIZE
 };
 
+// ATS: 取自 tmp-ats/TileMapInfo.json
+const atsMapInfo = {
+    minX: -120098.891,
+    minY: -79127.37,
+    maxX: 41144.0938,
+    maxY: 82115.62,
+    minZoom: 0,
+    maxZoom: 8,
+    tileSize: TILE_SIZE
+};
+
+// ATS-Promods: 取自 tmp-ats-promods/TileMapInfo.json
+const atsPromodsMapInfo = {
+    minX: -120835.742,
+    minY: -87127.17,
+    maxX: 41880.9453,
+    maxY: 75589.5156,
+    minZoom: 0,
+    maxZoom: 8,
+    tileSize: TILE_SIZE
+};
+
+// 由 TileMapInfo 换算 Leaflet 所需的投影参数
+// span = max(W, H), factor = tileSize / span
+function buildMapInfo(info) {
+    const span = Math.max(info.maxX - info.minX, info.maxY - info.minY);
+    const factor = TILE_SIZE / span;
+    return Object.assign({}, info, {
+        mapWidth: info.maxX - info.minX,
+        mapHeight: info.maxY - info.minY,
+        span: span,
+        factorX: factor,
+        factorY: factor
+    });
+}
+
 const MAP_TYPES = {
+    3: {
+        name: 'ETS2-TMP',
+        mapConfig: () => buildMapInfo(etsMapInfo),
+        tileUrl: {
+            white: 'https://ets_tiles.cnly.top/20260903/tmp-ets/Tiles/{z}/{x}/{y}.png',
+            yellow: 'https://ets_tiles.cnly.top/20260903/tmp-ets-yellow/Tiles/{z}/{x}/{y}.png'
+        },
+        supportsYellow: true
+    },
     2: {
-        name: 'ProMods',
-        mapConfig: () => promodsMapInfo,
+        name: 'ETS-Promods',
+        mapConfig: () => buildMapInfo(promodsMapInfo),
         tileUrl: {
             white: 'https://ets_tiles.cnly.top/20260903/tmp-promods/Tiles/{z}/{x}/{y}.png',
             yellow: 'https://ets_tiles.cnly.top/20260903/tmp-promods-yellow/Tiles/{z}/{x}/{y}.png'
         },
         supportsYellow: true
     },
-    3: {
-        name: '新版 ETS2',
-        mapConfig: () => etsMapInfo,
+    4: {
+        name: 'ATS',
+        mapConfig: () => buildMapInfo(atsMapInfo),
         tileUrl: {
-            white: 'https://ets_tiles.cnly.top/20260903/tmp-ets/Tiles/{z}/{x}/{y}.png',
-            yellow: 'https://ets_tiles.cnly.top/20260903/tmp-ets-yellow/Tiles/{z}/{x}/{y}.png'
+            white: 'https://ets_tiles.cnly.top/20260903/tmp-ats/Tiles/{z}/{x}/{y}.png',
+            yellow: 'https://ets_tiles.cnly.top/20260903/tmp-ats-yellow/Tiles/{z}/{x}/{y}.png'
+        },
+        supportsYellow: true
+    },
+    5: {
+        name: 'ATS-Promods',
+        mapConfig: () => buildMapInfo(atsPromodsMapInfo),
+        tileUrl: {
+            white: 'https://ets_tiles.cnly.top/20260903/tmp-ats-promods/Tiles/{z}/{x}/{y}.png',
+            yellow: 'https://ets_tiles.cnly.top/20260903/tmp-ats-promods-yellow/Tiles/{z}/{x}/{y}.png'
         },
         supportsYellow: true
     }
